@@ -1,6 +1,6 @@
 
 """     Simple Tetris using PyGame  """
-"""             August 2023           """
+"""            August 2023          """
 """      Raymond NGUYEN THANH       """
 
 import sys, random
