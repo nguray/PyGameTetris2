@@ -50,7 +50,7 @@ class Shape:
         '''     '''
         self.coords = [[0,0] for i in range(4)]
         self.pieceShape = Tetrominoe.NoShape
-        self.setShape(Tetrominoe.NoShape)
+        self.set_shape(Tetrominoe.NoShape)
         self.x = nx
         self.y = ny
         
@@ -58,7 +58,7 @@ class Shape:
         '''returns shape'''
         return self.pieceShape
         
-    def setShape(self, shape):
+    def set_shape(self, shape):
         '''sets a shape'''
         table = Shape.coordsTable[shape]
         for i in range(4):
@@ -66,7 +66,7 @@ class Shape:
                 self.coords[i][j] = table[i][j]
         self.pieceShape = shape
 
-    def tetrisRandomizer(self)->int:
+    def tetris_randomizer(self)->int:
         iSrc = 0
         ityp = 0
         if Shape.idTetroBag<14:
@@ -84,39 +84,39 @@ class Shape:
             #print(Shape.tetroBag)
         return ityp
 
-    def setRandomShape(self):
+    def set_random_shape(self):
         '''chooses a random shape'''
-        self.setShape(self.tetrisRandomizer())
+        self.set_shape(self.tetris_randomizer())
                
-    def minX(self)->int:
+    def min_x(self)->int:
         '''returns min x value'''
         m = self.coords[0][0]
         for i in range(1,4):
             m = min(m, self.coords[i][0])
         return m
         
-    def maxX(self)->int:
+    def max_x(self)->int:
         '''returns max x value'''
         m = self.coords[0][0]
         for i in range(1,4):
             m = max(m, self.coords[i][0])
         return m
         
-    def minY(self)->int:
+    def min_y(self)->int:
         '''returns min y value'''
         m = self.coords[0][1]
         for i in range(1,4):
             m = min(m, self.coords[i][1])
         return m
         
-    def maxY(self)->int:
+    def max_y(self)->int:
         '''returns max y value'''
         m = self.coords[0][1]
         for i in range(1,4):
             m = max(m, self.coords[i][1])
         return m
         
-    def rotateLeft(self):
+    def rotate_left(self):
         '''rotate shape to the left'''
         if self.pieceShape == Tetrominoe.SquareShape:
             return
@@ -124,7 +124,7 @@ class Shape:
             self.coords[id][0] = -vy
             self.coords[id][1] = vx
 
-    def rotateRight(self):
+    def rotate_right(self):
         '''rotate shape to the right'''        
         if self.pieceShape == Tetrominoe.SquareShape:
             return
@@ -295,7 +295,7 @@ class App:
         self.velocity_y = 0
         self.curPiece = None
         self.nextPiece = Shape((Tetris.NB_COLUMNS +4 )*Tetris.CELL_SIZE,(Tetris.NB_ROWS//2+1)*Tetris.CELL_SIZE)
-        self.nextPiece.setRandomShape()
+        self.nextPiece.set_random_shape()
         self.last_tick_h = 0
         self.last_tick_v = 0
         self.last_tick_erase = 0
@@ -338,7 +338,7 @@ class App:
                     self.input_velocity_x = 1
                 case pygame.K_UP:
                     if self.curPiece != None:
-                        self.curPiece.rotateRight()
+                        self.curPiece.rotate_right()
                         savX = self.curPiece.x
                         fUndo = False
                         if self.curPiece.hitGround(self.game.board):
@@ -361,7 +361,7 @@ class App:
                                 fUndo = True
                         if fUndo:
                             self.curPiece.x = savX
-                            self.curPiece.rotateLeft()
+                            self.curPiece.rotate_left()
                 case pygame.K_DOWN:
                     if self.curPiece != None:
                         pass
@@ -405,13 +405,13 @@ class App:
 
     def ajustPosLeft(self):
         ''' Décaler la pièce si elle dépasse le bord gauche '''
-        dx = self.curPiece.minX() + self.curPiece.x
+        dx = self.curPiece.min_x() + self.curPiece.x
         if (dx<0):
             self.curPiece.x -= dx
 
     def ajustPosRight(self):
         ''' Décaler la pièce si elle dépasse le bord droit '''
-        dx = (self.curPiece.maxX() + self.curPiece.x) - (Tetris.NB_COLUMNS-1)
+        dx = (self.curPiece.max_x() + self.curPiece.x) - (Tetris.NB_COLUMNS-1)
         if dx>0:
             self.curPiece.x -= dx
 
@@ -445,9 +445,9 @@ class App:
         ''' Creates a new shape '''
         self.curPiece = self.nextPiece
         self.curPiece.x = (Tetris.NB_COLUMNS // 2 )*Tetris.CELL_SIZE
-        self.curPiece.y = -self.curPiece.minY()*Tetris.CELL_SIZE
+        self.curPiece.y = -self.curPiece.min_y()*Tetris.CELL_SIZE
         self.nextPiece = Shape((Tetris.NB_COLUMNS +4 )*Tetris.CELL_SIZE,(Tetris.NB_ROWS//2+1)*Tetris.CELL_SIZE)
-        self.nextPiece.setRandomShape()
+        self.nextPiece.set_random_shape()
     
     def computeCompletedLines(self)->int :
 
@@ -614,7 +614,7 @@ class App:
 
                     if (nbTicks-self.last_tick_rotate_shape) > 700:
                         self.last_tick_rotate_shape = nbTicks
-                        self.nextPiece.rotateRight()
+                        self.nextPiece.rotate_right()
 
                     if self.nbCompletedLines>0:
                         if (nbTicks-self.last_tick_erase) > 150:
@@ -657,14 +657,14 @@ class App:
                             else:            
                                 if  self.input_velocity_x==-1:
                                     if (self.curPiece.x % Tetris.CELL_SIZE)==0:
-                                        _x = self.curPiece.minX() + self.curPiece.iX()
+                                        _x = self.curPiece.min_x() + self.curPiece.iX()
                                         if  _x > 0:
                                             self.velocity_x = -1
                                             if not (self.curPiece.hitLeft(self.game.board)):
                                                 self.curPiece.x += self.velocity_x
                                 elif self.input_velocity_x==1:
                                     if (self.curPiece.x % Tetris.CELL_SIZE)==0:
-                                        _x = self.curPiece.maxX() + self.curPiece.iX()
+                                        _x = self.curPiece.max_x() + self.curPiece.iX()
                                         if _x<(Tetris.NB_COLUMNS-1):
                                             self.velocity_x = 1
                                             if not (self.curPiece.hitRight(self.game.board)):
