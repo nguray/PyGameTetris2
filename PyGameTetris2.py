@@ -1,8 +1,8 @@
 
-"""     Simple Tetris using PyGame  """
-"""            August 2023          """
-"""      Raymond NGUYEN THANH       """
-
+'''  Simple Tetris using PyGame
+         August 2023          
+      Raymond NGUYEN THANH       
+'''
 import sys, random
 from os import path
 from enum import IntEnum, unique
