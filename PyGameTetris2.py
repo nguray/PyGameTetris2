@@ -451,7 +451,7 @@ class App:
         self.nextPiece.set_random_shape()
     
     def compute_completed_lines(self)->int :
-
+        '''Compute the number of completed lines'''
         nbL = 0
         for y in range(0,Tetris.NB_ROWS):
             #-- Check completed line
@@ -465,7 +465,7 @@ class App:
         return nbL
 
     def drop_piece(self):
-        '''    '''
+        '''Drop current tetromino'''
         ix = int((self.curPiece.x+1)/Tetris.CELL_SIZE)
         iy = int((self.curPiece.y+1)/Tetris.CELL_SIZE)
         for [vx,vy] in self.curPiece.coords:
@@ -482,7 +482,7 @@ class App:
         return False
     
     def display_game_over(self):
-        '''  '''
+        '''Game Over Message'''
         textScore = 'Game Over'
         self.largeText.bold = True
         textSurface = self.largeText.render(textScore,True,(255,255,0))
@@ -491,7 +491,7 @@ class App:
         self._display_surf.blit(textSurface,textRect)
 
     def display_pause(self):
-        '''  '''
+        '''Pause Message'''
         textScore = 'PAUSE'
         self.largeText.bold = True
         textSurface = self.largeText.render(textScore,True,(255,255,0))
@@ -500,10 +500,12 @@ class App:
         self._display_surf.blit(textSurface,textRect)
 
     def save_high_score(self):
+        '''Save current high score'''
         with open(App.heightScoreFileName,'w',encoding="utf-8") as f:
             f.write(str(self.bestScore)+'\n')
 
     def load_high_score(self):
+        '''Load current high score'''
         if path.exists(App.heightScoreFileName):
             with open(App.heightScoreFileName,'r',encoding="utf-8") as f:
                 for li in f:
