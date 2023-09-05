@@ -133,6 +133,7 @@ class Shape:
             self.coords[id][1] = -vx
 
     def draw (self,display_surf):
+        ''' Draw Tetromino '''
        # Afficher la pièce courant
         cs = Tetris.CELL_SIZE-2
         cs1 = Tetris.CELL_SIZE-1
@@ -155,7 +156,7 @@ class Shape:
         iy = int((self.y)/Tetris.CELL_SIZE)
         return iy
 
-    def hitLeft(self, curboard: list[int])->bool:
+    def hit_left(self, curboard: list[int])->bool:
         fHit = False
         for [vx,vy] in self.coords:
             x = vx*Tetris.CELL_SIZE + self.x - 1
@@ -174,7 +175,7 @@ class Shape:
                     break
         return fHit
     
-    def hitRight(self,curboard: list[int])->bool:
+    def hit_right(self,curboard: list[int])->bool:
         fHit = False
         for [vx,vy] in self.coords:
             x = vx*Tetris.CELL_SIZE + self.x + Tetris.CELL_SIZE
@@ -193,7 +194,7 @@ class Shape:
                     break
         return fHit
 
-    def hitBottom(self)->bool:
+    def hit_bottom(self)->bool:
         for [_,vy] in self.coords:
             y = vy*Tetris.CELL_SIZE + self.y
             iy = int(y/Tetris.CELL_SIZE)
@@ -201,7 +202,7 @@ class Shape:
                 return True
         return False
 
-    def isOutRightLimit(self)->bool:
+    def is_out_right_limit(self)->bool:
         for [vx,vy] in self.coords:
             x = vx*Tetris.CELL_SIZE + self.x
             y = vy*Tetris.CELL_SIZE + self.y
@@ -211,7 +212,7 @@ class Shape:
                 return True
         return False            
        
-    def isOutLeftLimit(self)->bool:
+    def is_out_left_limit(self)->bool:
         for [vx,vy] in self.coords:
             x = vx*Tetris.CELL_SIZE + self.x
             y = vy*Tetris.CELL_SIZE + self.y
@@ -221,7 +222,7 @@ class Shape:
                 return True
         return False            
 
-    def hitGround(self, board: list[int])->bool:
+    def hit_ground(self, board: list[int])->bool:
         
         for [vx,vy] in self.coords:
 
@@ -324,7 +325,7 @@ class App:
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption('PyGame Tetris')
         self._running = True
-        self.loadHeightScore()
+        self.load_high_score()
  
     def on_event(self, event):
         '''    '''
@@ -341,23 +342,23 @@ class App:
                         self.curPiece.rotate_right()
                         savX = self.curPiece.x
                         fUndo = False
-                        if self.curPiece.hitGround(self.game.board):
+                        if self.curPiece.hit_ground(self.game.board):
                             fUndo = True
-                        elif self.curPiece.isOutRightLimit():
+                        elif self.curPiece.is_out_right_limit():
                             # Try to shift inside board
                             while True:
                                 self.curPiece.x -= Tetris.CELL_SIZE
-                                if not self.curPiece.isOutRightLimit():
+                                if not self.curPiece.is_out_right_limit():
                                     break
-                            if self.curPiece.hitGround(self.game.board):
+                            if self.curPiece.hit_ground(self.game.board):
                                 fUndo = True
-                        elif self.curPiece.isOutLeftLimit():
+                        elif self.curPiece.is_out_left_limit():
                             # Try to shift inside board
                             while True:
                                 self.curPiece.x += Tetris.CELL_SIZE
-                                if not self.curPiece.isOutLeftLimit():
+                                if not self.curPiece.is_out_left_limit():
                                     break
-                            if self.curPiece.hitGround(self.game.board):
+                            if self.curPiece.hit_ground(self.game.board):
                                 fUndo = True
                         if fUndo:
                             self.curPiece.x = savX
@@ -370,7 +371,7 @@ class App:
                 case pygame.K_SPACE:
                     if self.curPiece==None:
                         # Démarrer la partie
-                        self.startGame()
+                        self.start_game()
                     else:
                         # Faire tomber la pièce
                         self.fDropBottom = True
@@ -382,7 +383,7 @@ class App:
                     self.pauseMode = False
                     if self.score>self.bestScore:
                         self.bestScore = self.score
-                        self.saveHeightScore()
+                        self.save_high_score()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.input_velocity_x = 0
@@ -403,19 +404,19 @@ class App:
             return 2000
         return 0
 
-    def ajustPosLeft(self):
-        ''' Décaler la pièce si elle dépasse le bord gauche '''
-        dx = self.curPiece.min_x() + self.curPiece.x
-        if (dx<0):
-            self.curPiece.x -= dx
+    # def ajust_pos_left(self):
+    #     ''' Décaler la pièce si elle dépasse le bord gauche '''
+    #     dx = self.curPiece.min_x() + self.curPiece.x
+    #     if (dx<0):
+    #         self.curPiece.x -= dx
 
-    def ajustPosRight(self):
-        ''' Décaler la pièce si elle dépasse le bord droit '''
-        dx = (self.curPiece.max_x() + self.curPiece.x) - (Tetris.NB_COLUMNS-1)
-        if dx>0:
-            self.curPiece.x -= dx
+    # def ajust_pos_right(self):
+    #     ''' Décaler la pièce si elle dépasse le bord droit '''
+    #     dx = (self.curPiece.max_x() + self.curPiece.x) - (Tetris.NB_COLUMNS-1)
+    #     if dx>0:
+    #         self.curPiece.x -= dx
 
-    def displayScore(self):
+    def display_score(self):
         '''  '''
         self.smallText.bold = True
         textScore = 'SCORE : {:05d}'.format(self.score)
@@ -431,17 +432,17 @@ class App:
         textRect.top = self.height - 20
         self._display_surf.blit(textSurface,textRect)
 
-    def startGame(self):
+    def start_game(self):
         '''  Démarrer le jeu '''
         self.last_tick_h = pygame.time.get_ticks()
         self.last_tick_v = pygame.time.get_ticks()
         self.last_tick_erase = pygame.time.get_ticks()
-        self.newPiece()
+        self.new_piece()
         self.runGame = True
         self.fGameOver = False
         self.game.clear()
 
-    def newPiece(self):
+    def new_piece(self):
         ''' Creates a new shape '''
         self.curPiece = self.nextPiece
         self.curPiece.x = (Tetris.NB_COLUMNS // 2 )*Tetris.CELL_SIZE
@@ -449,7 +450,7 @@ class App:
         self.nextPiece = Shape((Tetris.NB_COLUMNS +4 )*Tetris.CELL_SIZE,(Tetris.NB_ROWS//2+1)*Tetris.CELL_SIZE)
         self.nextPiece.set_random_shape()
     
-    def computeCompletedLines(self)->int :
+    def compute_completed_lines(self)->int :
 
         nbL = 0
         for y in range(0,Tetris.NB_ROWS):
@@ -463,7 +464,7 @@ class App:
                 nbL += 1
         return nbL
 
-    def dropPiece(self):
+    def drop_piece(self):
         '''    '''
         ix = int((self.curPiece.x+1)/Tetris.CELL_SIZE)
         iy = int((self.curPiece.y+1)/Tetris.CELL_SIZE)
@@ -472,7 +473,7 @@ class App:
             y = vy + iy
             if (x>=0) and (x<Tetris.NB_COLUMNS) and (y>=0) and (y<Tetris.NB_ROWS) :
                 self.game.board[x+y*Tetris.NB_COLUMNS] = self.curPiece.pieceShape
-        self.nbCompletedLines = self.computeCompletedLines()
+        self.nbCompletedLines = self.compute_completed_lines()
         if self.nbCompletedLines>0:
             self.score += self.compute_score(self.nbCompletedLines)
             self.last_tick_erase = pygame.time.get_ticks()
@@ -480,7 +481,7 @@ class App:
 
         return False
     
-    def displayGameOver(self):
+    def display_game_over(self):
         '''  '''
         textScore = 'Game Over'
         self.largeText.bold = True
@@ -489,7 +490,7 @@ class App:
         textRect.center = (self.width/2 ,self.height/2)
         self._display_surf.blit(textSurface,textRect)
 
-    def displayPause(self):
+    def display_pause(self):
         '''  '''
         textScore = 'PAUSE'
         self.largeText.bold = True
@@ -498,11 +499,11 @@ class App:
         textRect.center = (self.width/2 ,self.height/2)
         self._display_surf.blit(textSurface,textRect)
 
-    def saveHeightScore(self):
+    def save_high_score(self):
         with open(App.heightScoreFileName,'w',encoding="utf-8") as f:
             f.write(str(self.bestScore)+'\n')
 
-    def loadHeightScore(self):
+    def load_high_score(self):
         if path.exists(App.heightScoreFileName):
             with open(App.heightScoreFileName,'r',encoding="utf-8") as f:
                 for li in f:
@@ -543,13 +544,13 @@ class App:
                     pygame.draw.line(self._display_surf,DARK_GREY,(right,bottom),(right,y))
 
         # Afficher le score courant
-        self.displayScore()
+        self.display_score()
 
         # Afficher un message
         if self.fGameOver == True:
-            self.displayGameOver()
+            self.display_game_over()
         elif self.pauseMode == True:
-            self.displayPause()
+            self.display_pause()
 
         pygame.display.flip()
 
@@ -557,7 +558,7 @@ class App:
         '''    '''
         if self.score>self.bestScore:
             self.bestScore = self.score
-            self.saveHeightScore()
+            self.save_high_score()
         pygame.quit()
         sys.exit()
  
@@ -583,7 +584,7 @@ class App:
                 return True
         return False
 
-    def eraseFirstCompletedLine(self):
+    def erase_top_completed_line(self):
         for y in range(0,Tetris.NB_ROWS):
             #-- Check completed line
             f_complete = True
@@ -619,7 +620,7 @@ class App:
                     if self.nbCompletedLines>0:
                         if (nbTicks-self.last_tick_erase) > 150:
                             self.last_tick_erase = nbTicks
-                            self.eraseFirstCompletedLine()
+                            self.erase_top_completed_line()
                             self.nbCompletedLines -= 1
                             self.sound.play()
                     
@@ -631,7 +632,7 @@ class App:
                             self.pauseMode = False
                             if self.score>self.bestScore:
                                 self.bestScore = self.score
-                                self.saveHeightScore()
+                                self.save_high_score()
                         return
 
 
@@ -641,7 +642,7 @@ class App:
                             if self.velocity_x == 1:
                                 dum = self.curPiece.x + self.velocity_x
                                 if (dum % Tetris.CELL_SIZE)!=0:
-                                    if not (self.curPiece.hitRight(self.game.board)):
+                                    if not (self.curPiece.hit_right(self.game.board)):
                                         self.curPiece.x += self.velocity_x                    
                                 else:
                                     self.curPiece.x += self.velocity_x
@@ -649,7 +650,7 @@ class App:
                             elif self.velocity_x == -1:
                                 dum = self.curPiece.x + self.velocity_x
                                 if (dum % Tetris.CELL_SIZE)!=0:
-                                    if not (self.curPiece.hitLeft(self.game.board)):
+                                    if not (self.curPiece.hit_left(self.game.board)):
                                         self.curPiece.x += self.velocity_x                    
                                 else:
                                     self.curPiece.x += self.velocity_x
@@ -660,14 +661,14 @@ class App:
                                         _x = self.curPiece.min_x() + self.curPiece.iX()
                                         if  _x > 0:
                                             self.velocity_x = -1
-                                            if not (self.curPiece.hitLeft(self.game.board)):
+                                            if not (self.curPiece.hit_left(self.game.board)):
                                                 self.curPiece.x += self.velocity_x
                                 elif self.input_velocity_x==1:
                                     if (self.curPiece.x % Tetris.CELL_SIZE)==0:
                                         _x = self.curPiece.max_x() + self.curPiece.iX()
                                         if _x<(Tetris.NB_COLUMNS-1):
                                             self.velocity_x = 1
-                                            if not (self.curPiece.hitRight(self.game.board)):
+                                            if not (self.curPiece.hit_right(self.game.board)):
                                                 self.curPiece.x += self.velocity_x
 
                     if self.fDropBottom:
@@ -706,7 +707,7 @@ class App:
                                         self.newPiece()
                             else:
                                 # Current Tetromino reach the bottom
-                                if not self.curPiece.hitBottom():
+                                if not self.curPiece.hit_bottom():
                                     self.curPiece.y += 1
                                     if (self.curPiece.x%Tetris.CELL_SIZE)==0:
                                         if (self.curPiece.y%Tetris.CELL_SIZE)==0:
@@ -724,11 +725,11 @@ class App:
                                         if self.curPiece.x%Tetris.CELL_SIZE!=0:
                                             self.curPiece.x = (int(self.curPiece.x/Tetris.CELL_SIZE)+1)*Tetris.CELL_SIZE
                                         # Freeze
-                                        self.dropPiece()
+                                        self.drop_piece()
                                         if self.is_game_over():
                                             self.fGameOver = True
                                         else:
-                                            self.newPiece()
+                                            self.new_piece()
                                         break
 
                     
