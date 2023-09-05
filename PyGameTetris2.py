@@ -699,12 +699,12 @@ class App:
                                         break
                             if (fHit):
                                 if (self.curPiece.x % Tetris.CELL_SIZE)==0 and (self.curPiece.y % Tetris.CELL_SIZE)==0:
-                                    self.dropPiece()
+                                    self.drop_piece()
                                     self.fDropBottom = False
                                     if self.is_game_over():
                                         self.fGameOver = True
                                     else:
-                                        self.newPiece()
+                                        self.new_piece()
                             else:
                                 # Current Tetromino reach the bottom
                                 if not self.curPiece.hit_bottom():
